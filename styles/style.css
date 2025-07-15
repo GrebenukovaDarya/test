@@ -1,0 +1,48 @@
+body{
+    padding: 15px;
+}
+
+.element{
+    fill: rgb(211, 211, 255); 
+    text-align: center;
+    
+    background-color: rgb(211, 211, 255);
+    text-anchor: middle;
+    
+}
+.activeElement{
+    fill: #7CFC00;
+}
+.element-text{
+    fill: black;
+}
+
+.test{
+    color:rgb(211, 211, 255);
+}
+
+.message{
+    background-color: #FFFACD;
+    text-align: center;
+    padding: 15px;
+}
+/*
+circle{
+    text-align: center;
+    background-color: rgb(211, 211, 255);
+}
+*/
+svg{
+    margin: 15px;
+    border: 2px solid black;
+    display: flex;
+    flex-direction: row;
+}
+#visualization{
+    margin: 15px;
+    border: 2px solid black;
+    width: 70%;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+}

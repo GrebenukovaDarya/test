@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Визуализация сортировки</title>
+
+    <link rel="stylesheet" href="styles/style.css"> 
+    <script src="https://d3js.org/d3.v7.min.js" ></script>
+    <script src="js.js" defer></script>
+
+</head>
+<body>
+  <select id="selectSort">
+    <option value="bubbleSort">bubbleSort</option>
+    <option value="selectionSort">selectionSort</option>
+    <option value="insertionSort">insertionSort</option>
+    <!-- <option value="quickSort">quickSort</option> -->
+  </select>
+
+  <input value="10, 11, 5, 2, 4" type="text" id="dataInput" placeholder="Введите числа через запятую">
+  <button id="startButton">Начать сортировку</button>
+  
+  <div id="visualization"></div>
+
+  <button id="nextStep">Next step</button>
+  <button id="playSort">Play sort</button>
+  
+</body>
+</html>
