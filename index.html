@@ -1,28 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Визуализация сортировки</title>
+  <title>Sort</title>
 
-    <link rel="stylesheet" href="styles/style.css"> 
-    <script src="https://d3js.org/d3.v7.min.js" ></script>
-    <script src="js.js" defer></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  
+
+  <link rel="stylesheet" href="styles/style.css"> 
+  <script src="https://d3js.org/d3.v7.min.js" ></script>
+  <script src="js.js" defer></script>
 
 </head>
 <body>
-  <select id="selectSort">
-    <option value="bubbleSort">bubbleSort</option>
-    <option value="selectionSort">selectionSort</option>
-    <option value="insertionSort">insertionSort</option>
-    <!-- <option value="quickSort">quickSort</option> -->
-  </select>
+
+  <main class="container">
+  
+    <div>
+
+      <select id="selectSort">
+        <option value="bubbleSort">bubbleSort</option>
+        <option value="selectionSort">selectionSort</option>
+        <option value="insertionSort">insertionSort</option>
+        <!-- <option value="quickSort">quickSort</option> -->
+      </select>
+
+    </div>
 
   <input value="10, 11, 5, 2, 4" type="text" id="dataInput" placeholder="Введите числа через запятую">
-  <button id="startButton">Начать сортировку</button>
+  <button class="button-class" id="startButton">Начать сортировку</button>
   
   <div id="visualization"></div>
 
-  <button id="nextStep">Next step</button>
-  <button id="playSort">Play sort</button>
+  <button class="button-class" id="nextStep">Next step</button>
+  <button class="button-class" id="playSort">Play sort</button>
   
+  </main>
+
 </body>
 </html>

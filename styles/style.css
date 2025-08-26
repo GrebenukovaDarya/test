@@ -1,9 +1,31 @@
-body{
-    padding: 15px;
+html {
+    width: 100%;
+    height: 100%;
+}
+body {
+    background-repeat: no-repeat;
+    background: linear-gradient(to top, #bcadf5, #cdc1fc, #e6e0ff);    background-color: #ffffff;
+    background-color: #cdc1fc;
+}
+main {
+    background-color: #f2efff;
+    padding: 30px;
+}
+
+.button-class {
+    background-color:  #9682e5;
+    border-style: none;
+    border-radius: 5px;
+    padding: 5px 15px;
+    color:#f7fcfe;
+}
+.button-class:hover {
+    background-color:  #836ed7;
+    transform: scale(0.9);
 }
 
 .element{
-    fill: rgb(211, 211, 255); 
+    fill: #9682e5;
     text-align: center;
     
     background-color: rgb(211, 211, 255);
@@ -14,15 +36,15 @@ body{
     fill: #7CFC00;
 }
 .element-text{
-    fill: black;
+    fill: #f7fcfe;
 }
 
 .test{
-    color:rgb(211, 211, 255);
+    color: #f7fcfe;
 }
 
 .message{
-    background-color: #FFFACD;
+    background-color: #f7fcfe;
     text-align: center;
     padding: 15px;
 }
@@ -37,6 +59,8 @@ svg{
     border: 2px solid black;
     display: flex;
     flex-direction: row;
+
+    background-color: #f7fcfe;
 }
 #visualization{
     margin: 15px;
