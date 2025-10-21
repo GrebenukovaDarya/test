@@ -29,11 +29,25 @@
 
   <input value="10, 11, 5, 2, 4" type="text" id="dataInput" placeholder="Введите числа через запятую">
   <button class="button-class" id="startButton">Начать сортировку</button>
+
+  <input type="number" id="selectSpeed" value="1000">
   
   <div id="visualization"></div>
 
   <button class="button-class" id="nextStep">Next step</button>
   <button class="button-class" id="playSort">Play sort</button>
+
+  <div id="generator">
+    <form id="arrayGenerator">
+      <input type="number" name="arrayLength" placeholder="длина массива" value="10" required>
+      <select name="arrayType">
+        <option value="random">Случайный</option>
+        <option value="reverseSorted">Обратно отсортированный</option>
+        <option value="almostSorted">Почти отсортированный</option>
+      </select>
+      <button type="submit">Сгенерировать</button>
+    </form>
+  </div>
   
   </main>
 
