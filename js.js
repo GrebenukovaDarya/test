@@ -7,6 +7,10 @@ const playSort = document.getElementById('playSort');
 
 const selectSort = document.getElementById('selectSort');
 
+const selectSpeed = document.getElementById('selectSpeed');
+
+let animation_speed = 1000;
+
 let data = [];
 let sorted_data = [];
 let n = 0;
@@ -19,6 +23,78 @@ const elementPadding = 4;
 let elementRadius = 0;
 
 let sortName = 'bubbleSort';
+
+document.getElementById("arrayGenerator").addEventListener('submit', generateArray);
+
+
+function generateArray(event) {
+  event.preventDefault();
+
+  const form = event.target;
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData.entries());
+
+  const len = data.arrayLength;
+  // console.log(len);
+  // console.log(data.arrayType);
+  const array = window[data.arrayType + 'Array'](len);
+
+  // console.log("array check");
+  // console.log(array);
+  const stringArray = array.join(', ');
+  dataInput.value = stringArray;
+
+}
+
+function randomArray(len) {
+  console.log("check func randomArray");
+  let max = 100;
+  let min = 0;
+  arr = [];
+  for (let i = 0; i < len; i++) {
+    arr[i] = Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  return arr;
+}
+
+function reverseSortedArray(len) {
+  console.log("check func reverseSortedArray");
+  let max = 100;
+  let min = 0;
+  let arr = [];
+  for (let i = 0; i < len; i++) {
+    arr[i] = Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  arr.sort(function (a, b) {
+    return a - b;
+  });
+  return arr.reverse();
+}
+
+function almostSortedArray(len) {
+  console.log("check func almostSortedArray");
+  let max = 100;
+  let min = 0;
+  let arr = [];
+  for (let i = 0; i < len; i++) {
+    arr[i] = Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  arr.sort(function (a, b) {
+    return a - b;
+  });
+  const dis = Math.floor(len * 0.15);
+
+  for (let i = 0; i < dis; i++) {
+    const index1 = Math.floor(Math.random() * len);
+    const index2 = Math.floor(Math.random() * len);
+    [arr[index1], arr[index2]] = [arr[index2], arr[index1]];
+  }
+  return arr;
+}
+
+selectSpeed.addEventListener("input", function(){
+  animation_speed = selectSpeed.value;
+})
 
 selectSort.addEventListener("change", function(){
   sortName = selectSort.value;
@@ -51,7 +127,7 @@ function switchElements(element1, element2) {
   const yPosition = SVGheight / 2;
 
   element1.transition()
-    .duration(1000)
+    .duration(animation_speed)
     .attrTween("transform", function() {
 
       const interpolateY = d3.interpolate(0, 1);
@@ -83,7 +159,7 @@ function switchElements(element1, element2) {
     .attr('transform', `translate(${xPosition2}, ${yPosition})`);*/
 
     element2.transition()
-    .duration(1000)
+    .duration(animation_speed)
     .attrTween("transform", function() {
 
       const interpolateY = d3.interpolate(0, 1);
@@ -142,7 +218,7 @@ async function bubbleSort(arr) {
 
         switchElements(element1, element2);
 
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, animation_speed));
         
       }
       circle1.classed('activeElement', false);
@@ -182,7 +258,7 @@ async function bubbleSortStep () {
 
     }
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, animation_speed));
 
     if (j < n - i - 1) {
       j++;
@@ -220,7 +296,7 @@ async function selectionSort(arr) {
 
         switchElements(element1, element2);
 
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, animation_speed));
     }
     
   }
@@ -260,7 +336,7 @@ async function selectionSortStep() {
 
     switchElements(element1, element2);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, animation_speed));
   }
 
   i++;
@@ -284,7 +360,7 @@ async function insertionSort(arr) {
       const element1 = d3.select(`[data-index="${j}"]`);
       const element2 = d3.select(`[data-index="${j + 1}"]`);
       switchElements(element1, element2);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, animation_speed));
 
       arr[j + 1] = arr[j];
       j = j - 1;
@@ -324,7 +400,7 @@ async function insertionSortStep() {
     const element1 = d3.select(`[data-index="${j}"]`);
     const element2 = d3.select(`[data-index="${j + 1}"]`);
     switchElements(element1, element2);
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, animation_speed));
 
     data[j + 1] = data[j];
     j = j - 1;
@@ -351,6 +427,7 @@ async function insertionSortStep() {
   nextStep.removeAttribute("disabled")
 }
 
+/*
 async function quickSort(first, last) {
 
   
@@ -373,12 +450,12 @@ async function quickSort(first, last) {
     }
     if (f <= l) {
 
-      /*
-      const element1 = d3.select(`[data-index="${f}"]`);
-      const element2 = d3.select(`[data-index="${l}"]`);
-      switchElements(element1, element2);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-*/
+      
+      // const element1 = d3.select(`[data-index="${f}"]`);
+      // const element2 = d3.select(`[data-index="${l}"]`);
+      // switchElements(element1, element2);
+      // await new Promise(resolve => setTimeout(resolve, animation_speed));
+
       temp = data[f];
       data[f] = data[l];
       data[l] = temp;
@@ -395,27 +472,27 @@ async function quickSort(first, last) {
   if (f < last) return quickSort(f, last);
 
   
-/*
-  console.log(data);
 
-  if ( sorted_data.toString() === data.toString()) {
-    if (document.getElementById('end-message') == null){
-      d3.select('#visualization')
-      .append('div')
-      .attr('class', 'message')
-      .attr('id', 'end-message')
-      .text('Массив отсортирован');
-    }
+  // console.log(data);
 
-    nextStep.removeAttribute("disabled")
-    playSort.removeAttribute("disabled")
+  // if ( sorted_data.toString() === data.toString()) {
+  //   if (document.getElementById('end-message') == null){
+  //     d3.select('#visualization')
+  //     .append('div')
+  //     .attr('class', 'message')
+  //     .attr('id', 'end-message')
+  //     .text('Массив отсортирован');
+  //   }
 
-    console.log('jgne');
-  }*/
+  //   nextStep.removeAttribute("disabled")
+  //   playSort.removeAttribute("disabled")
+
+  //   console.log('jgne');
+  // }
 
     
 }
-
+*/
 
 
 function visualise (dataString) {
