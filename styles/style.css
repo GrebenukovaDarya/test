@@ -70,3 +70,21 @@ svg{
     display: flex;
     flex-direction: column;
 }
+
+
+#generator{
+    width: 70%;
+    margin: 15px;
+    border: 2px solid #9682e5;
+    background-color: #cdc1fc;
+}
+#generator form{
+    display: flex;
+    flex-direction: column;
+}
+#generator form select,
+#generator form input,
+#generator form button{
+    width: 70%;
+    margin: auto;
+}
