@@ -16,6 +16,10 @@ let sorted_data = [];
 let n = 0;
 let i = 0, j = 0;
 let tempr = 0;
+let flag = true;
+
+let comp_counter = 0;
+let swap_counter = 0;
 
 const SVGwidth = 600;
 const SVGheight = SVGwidth/2;
@@ -26,6 +30,35 @@ let sortName = 'bubbleSort';
 
 document.getElementById("arrayGenerator").addEventListener('submit', generateArray);
 
+function validateArray(arr) {
+  try {
+    if(Array.isArray(arr)){
+      return arr.length;
+    }
+    else{
+      throw new Error("not array");
+    }
+  } catch (error) {
+    console.error("given value is not an array");
+    return false;
+  }
+}
+
+function validateSpeed(val){
+  try {
+    const number = parseInt(val);
+
+    if(isNaN(number)){
+      throw new Error("not number");
+    }
+
+    return Number.isInteger(number) && number >= 100 && number <= 10000;
+
+  } catch (error) {
+    console.error("animation_speed is not a number");
+    return false;
+  }
+}
 
 function generateArray(event) {
   event.preventDefault();
@@ -94,6 +127,15 @@ function almostSortedArray(len) {
 
 selectSpeed.addEventListener("input", function(){
   animation_speed = selectSpeed.value;
+  if (validateSpeed(animation_speed)) {
+    
+    this.classList.remove('error-field');
+  }
+  else {
+    console.log("speed error");
+    flag = false;
+    this.classList.add('error-field');
+  }
 })
 
 selectSort.addEventListener("change", function(){
@@ -196,16 +238,21 @@ function switchElements(element1, element2) {
 
 async function bubbleSort(arr) {
 
+  comp_counter = 0;
+  swap_counter = 0;
+
   nextStep.setAttribute('disabled', 'disabled');
   playSort.setAttribute('disabled', 'disabled');
 
   const n = arr.length;
-  for (let i = 0; i < n - 1; i++) {
-    for (let j = 0; j < n - i - 1; j++) {
+  for (i = 0; i < n - 1; i++) {
+    for (j = 0; j < n - i - 1; j++) {
 
       const circle1 = d3.select(`[element-index="${j}"]`);
       circle1.classed('activeElement', true);
 
+      comp_counter++;
+      //console.log("ch: " + i + " " + j)
 
       if (arr[j] > arr[j + 1]) {
         
@@ -217,6 +264,7 @@ async function bubbleSort(arr) {
         const element2 = d3.select(`[data-index="${j + 1}"]`);
 
         switchElements(element1, element2);
+        swap_counter++;
 
         await new Promise(resolve => setTimeout(resolve, animation_speed));
         
@@ -224,14 +272,9 @@ async function bubbleSort(arr) {
       circle1.classed('activeElement', false);
     }
   }
-  console.log('fin');
-  if (document.getElementById('end-message') == null){
-    d3.select('#visualization')
-    .append('div')
-    .attr('class', 'message')
-    .attr('id', 'end-message')
-    .text('Массив отсортирован');
-  }
+  //console.log('fin');
+
+  endSort()
 
   nextStep.removeAttribute("disabled")
   playSort.removeAttribute("disabled")
@@ -243,6 +286,11 @@ async function bubbleSortStep () {
   const circle1 = d3.select(`[element-index="${j}"]`);
   circle1.classed('activeElement', true);
 
+    if (i < n - 1 && i < n - i - 1){
+      comp_counter++;
+      //console.log("ch: " + i + " " + j)
+    }
+    
     if (data[j] > data[j+1]) {
       const element1 = d3.select(`[data-index="${j}"]`);
       const element2 = d3.select(`[data-index="${j + 1}"]`);
@@ -255,12 +303,13 @@ async function bubbleSortStep () {
       //circle1.attr('class', currentClass + ' activeElement');
 
       switchElements(element1, element2);
+      swap_counter++;
 
     }
 
     await new Promise(resolve => setTimeout(resolve, animation_speed));
 
-    if (j < n - i - 1) {
+    if (j < n - i - 2) {
       j++;
       circle1.classed('activeElement', false);
     } else {
@@ -270,24 +319,30 @@ async function bubbleSortStep () {
     }
 
     nextStep.removeAttribute("disabled")
-
 }
 
 async function selectionSort(arr) {
 
+  comp_counter = 0;
+  swap_counter = 0;
+
   nextStep.setAttribute('disabled', 'disabled');
   playSort.setAttribute('disabled', 'disabled');
 
-  for (let i = 0; i < n - 1; i++) {
+  for (i = 0; i < n - 1; i++) {
     let minIndex = i;
-    for (let j = i + 1; j < n; j++) {
+    for (j = i + 1; j < n; j++) {
+
+      comp_counter++;
       if (arr[j] < arr[minIndex]) {
         minIndex = j;
       }
     }
+
+    comp_counter++;
     if (minIndex !== i) {
 
-      let temp = arr[i];
+        let temp = arr[i];
         arr[i] = arr[minIndex];
         arr[minIndex] = temp;
 
@@ -295,19 +350,14 @@ async function selectionSort(arr) {
         const element2 = d3.select(`[data-index="${minIndex}"]`);
 
         switchElements(element1, element2);
+        swap_counter++;
 
         await new Promise(resolve => setTimeout(resolve, animation_speed));
     }
     
   }
 
-  if (document.getElementById('end-message') == null){
-    d3.select('#visualization')
-    .append('div')
-    .attr('class', 'message')
-    .attr('id', 'end-message')
-    .text('Массив отсортирован');
-  }
+  endSort();
 
   nextStep.removeAttribute("disabled")
   playSort.removeAttribute("disabled")
@@ -320,11 +370,14 @@ async function selectionSortStep() {
   let minIndex = i; 
 
   for (let j = i + 1; j < n; j++) {
+
+    comp_counter++;
     if (data[j] < data[minIndex]) {
       minIndex = j;
     }
   }
 
+  comp_counter++;
   if (minIndex !== i) {
 
     let temp = data[i];
@@ -335,6 +388,7 @@ async function selectionSortStep() {
     const element2 = d3.select(`[data-index="${minIndex}"]`);
 
     switchElements(element1, element2);
+    swap_counter++;
 
     await new Promise(resolve => setTimeout(resolve, animation_speed));
   }
@@ -345,21 +399,29 @@ async function selectionSortStep() {
 
 async function insertionSort(arr) {
 
+  comp_counter = 0;
+  swap_counter = 0;
+
   nextStep.setAttribute('disabled', 'disabled');
   playSort.setAttribute('disabled', 'disabled');
 
-  for (let i = 1; i < n; i++) {
+  for (i = 1; i < n; i++) {
 
     const circle1 = d3.select(`[element-index="${i}"]`);
     circle1.classed('activeElement', true);
 
     const temp = arr[i];
-    let j = i - 1;
+    j = i - 1;
+
+    comp_counter++;
     while (j >= 0 && arr[j] > temp) {
 
       const element1 = d3.select(`[data-index="${j}"]`);
       const element2 = d3.select(`[data-index="${j + 1}"]`);
+
       switchElements(element1, element2);
+      swap_counter++;
+
       await new Promise(resolve => setTimeout(resolve, animation_speed));
 
       arr[j + 1] = arr[j];
@@ -374,13 +436,7 @@ async function insertionSort(arr) {
     circle1.classed('activeElement', false);
   }
 
-  if (document.getElementById('end-message') == null){
-    d3.select('#visualization')
-    .append('div')
-    .attr('class', 'message')
-    .attr('id', 'end-message')
-    .text('Массив отсортирован');
-  }
+  endSort();
 
   nextStep.removeAttribute("disabled")
   playSort.removeAttribute("disabled")
@@ -399,7 +455,10 @@ async function insertionSortStep() {
 
     const element1 = d3.select(`[data-index="${j}"]`);
     const element2 = d3.select(`[data-index="${j + 1}"]`);
+
     switchElements(element1, element2);
+    swap_counter++;
+
     await new Promise(resolve => setTimeout(resolve, animation_speed));
 
     data[j + 1] = data[j];
@@ -426,74 +485,6 @@ async function insertionSortStep() {
 
   nextStep.removeAttribute("disabled")
 }
-
-/*
-async function quickSort(first, last) {
-
-  
-  //nextStep.setAttribute('disabled', 'disabled');
-  //playSort.setAttribute('disabled', 'disabled');
-
-
-  let f = first, l = last;
-
-  let midIndex = (f + l) / 2;
-  let mid = data[midIndex];
-
-  let temp;
-  do{
-    while (data[f] < mid) {
-      f++;
-    }
-    while (data[l] > mid) {
-      l--;
-    }
-    if (f <= l) {
-
-      
-      // const element1 = d3.select(`[data-index="${f}"]`);
-      // const element2 = d3.select(`[data-index="${l}"]`);
-      // switchElements(element1, element2);
-      // await new Promise(resolve => setTimeout(resolve, animation_speed));
-
-      temp = data[f];
-      data[f] = data[l];
-      data[l] = temp;
-      f++;
-      l--;
-    }
-  } while(f < l);
-
-  //console.log(data);
-  //console.log(first, l, last, f);
-  console.log(data);
-
-  if (first < l) return quickSort(first, l);
-  if (f < last) return quickSort(f, last);
-
-  
-
-  // console.log(data);
-
-  // if ( sorted_data.toString() === data.toString()) {
-  //   if (document.getElementById('end-message') == null){
-  //     d3.select('#visualization')
-  //     .append('div')
-  //     .attr('class', 'message')
-  //     .attr('id', 'end-message')
-  //     .text('Массив отсортирован');
-  //   }
-
-  //   nextStep.removeAttribute("disabled")
-  //   playSort.removeAttribute("disabled")
-
-  //   console.log('jgne');
-  // }
-
-    
-}
-*/
-
 
 function visualise (dataString) {
 
@@ -546,33 +537,48 @@ function visualise (dataString) {
 
 startButton.addEventListener('click', () => {
 
-  i = 0;
-  j = 0;
+  comp_counter = 0;
+  swap_counter = 0;
+
+  if (sortName == "insertionSort") {
+    i = 1;
+    j = i - 1;
+  }
+  else {
+    i = 0;
+    j = 0;
+  }
 
   const dataString = dataInput.value;
   
   if (/^\s*\d+(\s*,\s*\d+)*\s*$/.test(dataString)) {
     visualise(dataString);
+    dataInput.classList.remove('error-field');
   }
   else {
-    console.log('error');
+    dataInput.classList.add('error-field');
+    //console.log('error');
   }
 });
 
 playSort.addEventListener('click', () => {
 
-  //selectionSort(data);
-  if (sortName == 'quickSort') {
-
-    window[sortName](0, n - 1);
-  }
-  else {
-    window[sortName](data);
-  }
+  window[sortName](data);
 
 });
 
 nextStep.addEventListener('click', () => {
+
+  if (!validateSpeed(animation_speed)) {
+
+    console.log("ERROR");
+    return false;
+  }
+  if (!validateArray(data)) {
+
+    console.log("ERROR");
+    return false;
+  }
 
   //console.log(data);
   //console.log(sorted_data);
@@ -587,16 +593,24 @@ nextStep.addEventListener('click', () => {
   }
   else {
 
-    //console.log("fin");
+    console.log("fin");
 
-    //circle1.classed('activeElement', false);
-
-    if(document.getElementById('end-message') == null && (sorted_data.toString() === data.toString())){
-      d3.select('#visualization')
-      .append('div')
-      .attr('class', 'message')
-      .attr('id', 'end-message')
-      .text('Массив отсортирован');
-    }
+    endSort()
   }
 });
+
+function endSort(){
+
+  console.log("comp " + comp_counter);
+  console.log("swap " + swap_counter);
+
+  str = toString(comp_counter) + ' ' + toString(swap_counter);
+
+  if(document.getElementById('end-message') == null) {
+    d3.select('#visualization')
+    .append('div')
+    .attr('class', 'message')
+    .attr('id', 'end-message')
+    .text('Массив отсортирован');
+  }
+}
