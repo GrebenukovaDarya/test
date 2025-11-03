@@ -283,15 +283,22 @@ async function bubbleSort(arr) {
 async function bubbleSortStep () {
   nextStep.setAttribute('disabled', 'disabled');
 
+  if (i < n - 1 && j < n - i - 1){
+    comp_counter++;
+    //console.log("ch: " + i + " " + j)
+  }
+  else{
+    flag = false;
+    //console.log("check " + i + " " + j);
+    endSort();
+    return;
+  }
+
   const circle1 = d3.select(`[element-index="${j}"]`);
   circle1.classed('activeElement', true);
 
-    if (i < n - 1 && i < n - i - 1){
-      comp_counter++;
-      //console.log("ch: " + i + " " + j)
-    }
     
-    if (data[j] > data[j+1]) {
+  if (data[j] > data[j+1]) {
       const element1 = d3.select(`[data-index="${j}"]`);
       const element2 = d3.select(`[data-index="${j + 1}"]`);
 
@@ -305,18 +312,18 @@ async function bubbleSortStep () {
       switchElements(element1, element2);
       swap_counter++;
 
-    }
+  }
 
-    await new Promise(resolve => setTimeout(resolve, animation_speed));
+  await new Promise(resolve => setTimeout(resolve, animation_speed));
 
-    if (j < n - i - 2) {
+  if (j < n - i - 2) {
       j++;
       circle1.classed('activeElement', false);
-    } else {
+  } else {
       j = 0;
       i++;
       circle1.classed('activeElement', false);
-    }
+  }
 
     nextStep.removeAttribute("disabled")
 }
@@ -367,9 +374,27 @@ async function selectionSortStep() {
 
   nextStep.setAttribute('disabled', 'disabled');
 
+  // if (i >= n - 1 && j >= n) {
+  //   flag = false;
+  //   endSort();
+
+  //   console.log("check " + i + " " + j);
+
+  //   return;
+  // }
+
   let minIndex = i; 
 
-  for (let j = i + 1; j < n; j++) {
+  for (j = i + 1; j < n; j++) {
+
+    if (i >= n - 1 && j >= n) {
+      flag = false;
+      endSort();
+  
+      console.log("check " + i + " " + j);
+      
+      return;
+    }
 
     comp_counter++;
     if (data[j] < data[minIndex]) {
@@ -537,6 +562,8 @@ function visualise (dataString) {
 
 startButton.addEventListener('click', () => {
 
+  flag = true;
+
   comp_counter = 0;
   swap_counter = 0;
 
@@ -579,12 +606,12 @@ nextStep.addEventListener('click', () => {
     console.log("ERROR");
     return false;
   }
-
   //console.log(data);
   //console.log(sorted_data);
   //console.log(n);
 
-  if (!(sorted_data.toString() === data.toString())) {
+  // if (!(sorted_data.toString() === data.toString())) {
+  if (flag == true) {
 
     //bubbleSortStep();
     const sortStep = sortName + "Step";
@@ -595,7 +622,7 @@ nextStep.addEventListener('click', () => {
 
     console.log("fin");
 
-    endSort()
+    endSort();
   }
 });
 

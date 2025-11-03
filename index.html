@@ -9,7 +9,8 @@
 
   <link rel="stylesheet" href="styles/style.css"> 
   <script src="https://d3js.org/d3.v7.min.js" ></script>
-  <script src="js.js" defer></script>
+  <script src="js2.js" defer></script>
+  <script src="interface.js" defer></script>
 
 </head>
 <body>
@@ -19,10 +20,9 @@
     <div>
 
       <select id="selectSort">
+        <option value="insertionSort">insertionSort</option>
         <option value="bubbleSort">bubbleSort</option>
         <option value="selectionSort">selectionSort</option>
-        <option value="insertionSort">insertionSort</option>
-        <!-- <option value="quickSort">quickSort</option> -->
       </select>
 
     </div>
@@ -30,23 +30,35 @@
   <input value="10, 11, 5, 2, 4" type="text" id="dataInput" placeholder="Введите числа через запятую">
   <button class="button-class" id="startButton">Начать сортировку</button>
 
-  <input type="number" id="selectSpeed" value="1000">
+  <input type="number" id="selectSpeed" value="300">
   
   <div id="visualization"></div>
 
-  <button class="button-class" id="nextStep">Next step</button>
-  <button class="button-class" id="playSort">Play sort</button>
+  <div id="manage-wrapper" class="hidden">
+    <div id="manage-nuttons">
+      <button class="button-class" id="nextStep">Next step</button>
+      <button class="button-class" id="playSort">Play sort</button>
+    </div>
+  </div>
+  
 
-  <div id="generator">
-    <form id="arrayGenerator">
-      <input type="number" name="arrayLength" placeholder="длина массива" value="10" required>
-      <select name="arrayType">
-        <option value="random">Случайный</option>
-        <option value="reverseSorted">Обратно отсортированный</option>
-        <option value="almostSorted">Почти отсортированный</option>
-      </select>
-      <button type="submit">Сгенерировать</button>
-    </form>
+  <p id="comp-counter"></p>
+  <p id="swap-counter"></p>
+
+  <button id="generateArray" class="button-class">Сгенерировать случайный массив</button>
+
+  <div id="generator-wrapper" class="hidden">
+    <div id="generator">
+      <form id="arrayGenerator">
+        <input type="number" name="arrayLength" placeholder="длина массива" value="10" required>
+        <select name="arrayType">
+          <option value="random">Случайный</option>
+          <option value="reverseSorted">Обратно отсортированный</option>
+          <option value="almostSorted">Почти отсортированный</option>
+        </select>
+        <button type="submit">Сгенерировать</button>
+      </form>
+    </div>
   </div>
   
   </main>

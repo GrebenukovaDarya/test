@@ -23,6 +23,9 @@ main {
     background-color:  #836ed7;
     transform: scale(0.9);
 }
+.button-class:disabled {
+    background-color: #f9adc1;
+}
 
 .element{
     fill: #9682e5;
@@ -32,8 +35,11 @@ main {
     text-anchor: middle;
     
 }
-.activeElement{
+.sortedElement{
     fill: #7CFC00;
+}
+.activeElement{
+    fill: #d4bbff;
 }
 .element-text{
     fill: #f7fcfe;
@@ -92,4 +98,12 @@ svg{
 .error-field{
     border-color: rgb(160, 42, 42);
     background-color: #f9adc1;
+}
+
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: block;
 }
