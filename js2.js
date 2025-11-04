@@ -29,7 +29,7 @@ const SVGheight = SVGwidth/2;
 const elementPadding = 4;
 let elementRadius = 0;
 
-let sortName = 'insertionSort';
+let sortName = selectSort.value;
 let currentMode = 'step';
 
 document.getElementById("arrayGenerator").addEventListener('submit', generateArray);
@@ -46,17 +46,30 @@ function displayManageButtons(state){
   }
 }
 
+function displayErrors(state, str){
+  const errorBlock = document.getElementById('error-message-wrapper');
+  if (state === 'remove'){
+    errorBlock.classList.remove('visible');
+    errorBlock.classList.add('hidden');
+  } else if (state == 'display') {
+    errorBlock.classList.add('visible');
+    errorBlock.classList.remove('hidden');
+    document.getElementById('error-mes').textContent = str;
+  }
+}
+
 // ВВОД -----------------------------------------------------------------------------
 
 selectSpeed.addEventListener("input", function(){
   animation_speed = selectSpeed.value;
   if (validateSpeed(animation_speed)) {
-    
+    displayErrors('remove');
     this.classList.remove('error-field');
   }
   else {
     console.log("speed error");
     //flag = false;
+    displayErrors('display', 'Укажите скорость анимаций в мс в диапазоне [100; 10000]')
     this.classList.add('error-field');
   }
 });
@@ -64,10 +77,13 @@ selectSpeed.addEventListener("input", function(){
 selectSort.addEventListener("change", function(){
   sortName = selectSort.value;
   
-  if (sortName == "insertionSort") {
-    i = 1;
-    j = i - 1;
-  }
+  // if (sortName == "insertionSort") {
+  //   i = 1;
+  //   j = i - 1;
+  // }
+
+  disableControls();
+
   //console.log(sortName);
 });
 
@@ -131,30 +147,50 @@ function visualise (dataString) {
 }
 
 function switchElements(element1, element2) {
+  return new Promise((resolve, reject) => {
+    if (!element1 || element1.size() === 0 || !element2 || element2.size() === 0) {
+      console.warn("switchElements: Один из элементов не найден");
+      reject();
+      return;
+    }
 
-  //console.log(element1, element2);
-  if (!element1 || !element2) {
-    console.warn("switchElements: Один из элементов не найден (null или undefined).");
-    return;
-  }
+    const index1 = parseInt(element1.attr('data-index'));
+    const index2 = parseInt(element2.attr('data-index'));
 
-  //const circle1 = element1.select('circle');
-  //circle1.classed('activeElement', true);
+    if (isNaN(index1) || isNaN(index2)) {
+      console.warn("switchElements: Невалидные индексы ", index1, index2);
+      reject();
+      return;
+    }
 
-  //console.log(element1.attr('data-index'))
-  const index1 = parseInt(element1.attr('data-index'));
-  //console.log(element2.attr('data-index'))
-  const index2 = parseInt(element2.attr('data-index'));
+    const xPosition1 = (index2 * (2 * elementRadius + 2 * elementPadding)) + elementRadius + elementPadding;
+    const xPosition2 = (index1 * (2 * elementRadius + 2 * elementPadding)) + elementRadius + elementPadding;
+    const yPosition = SVGheight / 2;
 
-  const xPosition1 = (index2 * (2 * elementRadius + 2 * elementPadding)) + elementRadius + elementPadding;
-  const xPosition2 = (index1 * (2 * elementRadius + 2 * elementPadding)) + elementRadius + elementPadding;
-  const yPosition = SVGheight / 2;
+    let completedAnimations = 0;
+    const totalAnimations = 2;
+
+    function checkCompletion() {
+      completedAnimations++;
+      if (completedAnimations === totalAnimations) {
+
+          element1.attr('data-index', index2);
+          element2.attr('data-index', index1);
+
+          const circle1 = element1.select(`[element-index="${index1}"]`);
+          const circle2 = element2.select(`[element-index="${index2}"]`);
+
+          circle1.attr('element-index', index2);
+          circle2.attr('element-index', index1);
+
+          resolve();
+      }
+    }
 
   element1.transition()
     .duration(animation_speed)
     .attrTween("transform", function() {
-
-      const interpolateY = d3.interpolate(0, 1);
+      //const interpolateY = d3.interpolate(0, 1);
 
       function parabolicY(t) {
         const peakHeight = 50;
@@ -164,29 +200,21 @@ function switchElements(element1, element2) {
       }
       
       const currentTransform = d3.select(this).attr("transform") || "translate(0,0)";
-  
       const [x, y] = currentTransform.match(/translate\(([^,]+),([^)]+)\)/)?.slice(1).map(Number) || [0, 0];
-  
       const interpolateX = d3.interpolate(x, xPosition1);
   
       return function(t) {
         const xCord = interpolateX(t);
         const yCord = parabolicY(t);
-        
         return `translate(${xCord}, ${yCord})`;
       };
-    });
-    
-/*
-  element2.transition()
-    .duration(1500)
-    .attr('transform', `translate(${xPosition2}, ${yPosition})`);*/
+    })
+    .on("end", checkCompletion);
 
     element2.transition()
     .duration(animation_speed)
     .attrTween("transform", function() {
-
-      const interpolateY = d3.interpolate(0, 1);
+      //const interpolateY = d3.interpolate(0, 1);
 
       function parabolicY(t) {
         const peakHeight = 50;
@@ -196,9 +224,7 @@ function switchElements(element1, element2) {
       }
       
       const currentTransform = d3.select(this).attr("transform") || "translate(0,0)";
-  
       const [x, y] = currentTransform.match(/translate\(([^,]+),([^)]+)\)/)?.slice(1).map(Number) || [0, 0];
-  
       const interpolateX = d3.interpolate(x, xPosition2);
   
       return function(t) {
@@ -207,15 +233,9 @@ function switchElements(element1, element2) {
         
         return `translate(${xCord}, ${yCord})`;
       };
-    });
-
-  element1.attr('data-index', index2);
-  element2.attr('data-index', index1);
-  const circle1 = element1.select(`[element-index="${index1}"]`);
-  const circle2 = element2.select(`[element-index="${index2}"]`);
-  circle1.attr('element-index', index2);
-  circle2.attr('element-index', index1);
-
+    })
+    .on("end", checkCompletion);
+  });
 }
 
 function shiftElement(element, toIndex) {
@@ -274,15 +294,20 @@ function insertElement(element, toIndex) {
 
 async function visualizeSwap(index1, index2) {
   const element1 = d3.select(`[data-index="${index1}"]`);
+  const circle1 = element1.select('circle');
+    if (circle1.size() > 0) {
+      circle1.classed('sortedElement', true);
+    }
   const element2 = d3.select(`[data-index="${index2}"]`);
-  
-  // element1.classed('swapping', true);
-  // element2.classed('swapping', true);
+  const circle2 = element2.select('circle');
+    if (circle2.size() > 0) {
+      circle2.classed('sortedElement', true);
+    }
   
   await switchElements(element1, element2);
   
-  // element1.classed('swapping', false);
-  // element2.classed('swapping', false);
+  circle1.classed('sortedElement', false);
+  circle2.classed('sortedElement', false);
 }
 
 async function visualizeShift(from, to) {
@@ -360,6 +385,8 @@ startButton.addEventListener('click', () => {
   
   if(validateInput(dataString) && validateSpeed(animation_speed)){
     visualise(dataString);
+
+    enableControls();
     displayManageButtons('display');
     updateCounters();
   }
@@ -444,7 +471,6 @@ async function playFullSort(arr) {
 
   await window[sortName]();
 
-  enableControls();
   endSort();
 }
 
@@ -456,14 +482,14 @@ async function bubbleSort() {
             return;
         }
 
-        const circle1 = d3.select(`[element-index="${j}"]`);
-        circle1.classed('sortedElement', true);
+        // const circle1 = d3.select(`[element-index="${j}"]`);
+        // circle1.classed('sortedElement', true);
 
         comp_counter++;
         updateCounters();
 
-        const circle2 = d3.select(`[element-index="${j + 1}"]`);
-        circle2.classed('activeElement', true);
+        // const circle2 = d3.select(`[element-index="${j + 1}"]`);
+        // circle2.classed('activeElement', true);
 
         if (currentArray[j] > currentArray[j + 1]) {
 
@@ -481,17 +507,17 @@ async function bubbleSort() {
           //circle2.classed('activeElement', false);  
         }
         
-        await new Promise(resolve => setTimeout(resolve, animation_speed));
+        //await new Promise(resolve => setTimeout(resolve, animation_speed));
 
-        circle2.classed('activeElement', false);
-        circle1.classed('sortedElement', false);
+        // circle2.classed('activeElement', false);
+        // circle1.classed('sortedElement', false);
     }
     j = 0;
   }
 
-  console.log("finish sorting");
-  console.log("final arr " + data);
-  console.log("final arr " + currentArray);
+  // console.log("finish sorting");
+  // console.log("final arr " + data);
+  // console.log("final arr " + currentArray);
 }
 
 async function bubbleSortStep () {
@@ -504,23 +530,23 @@ async function bubbleSortStep () {
 
   //console.log("2");
 
-  nextStep.setAttribute('disabled', 'disabled');
+  disableControls();
 
   if (i >= n - 1) {
     endSort();
     return;
   }
 
-  const circle1 = d3.select(`[element-index="${j}"]`);
-  circle1.classed('sortedElement', true);
+ // const circle1 = d3.select(`[element-index="${j}"]`);
+  //circle1.classed('activeElement', true);
 
   comp_counter++;
   updateCounters();
 
   //console.log("currArray " + currentArray);
 
-  const circle2 = d3.select(`[element-index="${j + 1}"]`);
-  circle2.classed('activeElement', true);
+  //const circle2 = d3.select(`[element-index="${j + 1}"]`);
+  //circle2.classed('activeElement', true);
 
   if (currentArray[j] > currentArray[j + 1]) {
     [currentArray[j], currentArray[j + 1]] = [currentArray[j + 1], currentArray[j]];
@@ -532,11 +558,19 @@ async function bubbleSortStep () {
     swap_counter++;
     updateCounters();
   }
+  else{
+    const circle1 = d3.select(`[element-index="${j}"]`);
+    circle1.classed('activeElement', true);
+    
+    const circle2 = d3.select(`[element-index="${j + 1}"]`);
+    circle2.classed('activeElement', true);
 
-  await new Promise(resolve => setTimeout(resolve, animation_speed));
+    await new Promise(resolve => setTimeout(resolve, animation_speed));
 
-  circle2.classed('activeElement', false);
-  circle1.classed('sortedElement', false);
+    circle2.classed('activeElement', false);
+    circle1.classed('activeElement', false);
+  }
+
 
   if (j < n - i - 2) {
     j++;
@@ -545,7 +579,7 @@ async function bubbleSortStep () {
     i++;
   }
 
-  nextStep.removeAttribute("disabled");
+  enableControls();
   updateGlobalData();
 }
 
@@ -596,7 +630,7 @@ async function insertionSort(){
 
     //console.log("seek " + (j + 1));
 
-    visualizeInsert(j + 1, 'key');
+    await visualizeInsert(j + 1, 'key');
     //await new Promise(resolve => setTimeout(resolve, animation_speed));
 
     //console.log(tempr + " jjj");
@@ -615,40 +649,64 @@ async function insertionSort(){
     console.log("cur " + currentArray);
   }
   
-  for (let k = 0; k <= i; k++) {
-    const circle = d3.select(`[element-index="${k}"]`);
-    circle.classed('sortedElement', true);
-  }
 }
 
 async function insertionSortStep(){
 
-  nextStep.setAttribute('disabled', 'disabled');
+  disableControls();
 
   if (i >= n) {
+    for (let k = 0; k < n; k++) {
+        const circle = d3.select(`[element-index="${k}"]`);
+        circle.classed('sortedElement', true);
+    }
     endSort();
     return;
   }
 
-  if (j === i - 1 && currentArray[j] > currentArray[i]) {
-    tempr = currentArray[i];
-  }
+  keyElement = d3.select(`[data-index="key"]`);
 
-  if (j >= 0 && currentArray[j] > window.insertionKey) {
-    
+  if (keyElement.size() === 0) {
+
+    tempr = currentArray[temprIndex];
+    keyElement = d3.select(`[data-index="${temprIndex}"]`);
+    keyElement.attr('data-index', 'key');
+    const circle1 = keyElement.select('circle');
+    if (circle1.size() > 0) {
+        circle1.attr('element-index', 'key');
+    }
+
+    await ShiftUpElement(keyElement);
+
+  } else if (j >= 0 && currentArray[j] > tempr) {
+
     comp_counter++;
     updateCounters();
 
     currentArray[j + 1] = currentArray[j];
     await visualizeShift(j, j + 1);
+    j--;
+
+  } else {
+
+    currentArray[j + 1] = tempr;
+
     swap_counter++;
     updateCounters();
 
-    updateVisualization(j, 'default');
-    j--;
-}
+    await visualizeInsert(j + 1, 'key');
 
-  nextStep.removeAttribute("disabled");
+    for (let k = 0; k <= i; k++) {
+      const circle = d3.select(`[element-index="${k}"]`);
+      circle.classed('sortedElement', true);
+    }
+
+    j = i;
+    i++;
+    temprIndex = i;
+  }
+
+  enableControls();
   updateGlobalData();
 }
 
@@ -664,7 +722,16 @@ async function selectionSort(){
       updateCounters();
 
       if (currentArray[j] < currentArray[minIndex]) {
+
+        const circle1 = d3.select(`[element-index="${minIndex}"]`);
+        circle1.classed('selectedElement', false);
+
         minIndex = j;
+
+        const circle2 = d3.select(`[element-index="${minIndex}"]`);
+        circle2.classed('selectedElement', true);
+
+        await new Promise(resolve => setTimeout(resolve, animation_speed));
       }
     }
 
@@ -674,34 +741,61 @@ async function selectionSort(){
     if (minIndex !== i) {
 
       [currentArray[i], currentArray[minIndex]] = [currentArray[minIndex], currentArray[i]];
+
+      const circle1 = d3.select(`[element-index="${minIndex}"]`);
+      circle1.classed('selectedElement', false);
+
       await visualizeSwap(i, minIndex);
+
 
       swap_counter++;
       updateCounters();
 
     }
+    //await new Promise(resolve => setTimeout(resolve, animation_speed));
+
+    const circle1 = d3.select(`[element-index="${minIndex}"]`);
+    circle1.classed('selectedElement', false);
     await new Promise(resolve => setTimeout(resolve, animation_speed));
 
     minIndex = i + 1;
+
     j = i + 2;
   }
+
+  // for (let k = 0; k <= n; k++) {
+  //   const circle = d3.select(`[element-index="${k}"]`);
+  //   circle.classed('selectedElement', false);
+  // }
 }
 
 async function selectionSortStep(){
 
-  nextStep.setAttribute('disabled', 'disabled');
+  disableControls();
 
   if (i >= n - 1) {
     endSort();
+    const circle2 = d3.select(`[element-index="${minIndex}"]`);
+    circle2.classed('selectedElement', false);
     return;
   }
 
   if (j === i + 1) {
+
+    const circle1 = d3.select(`[element-index="${minIndex}"]`);
+    circle1.classed('selectedElement', false);
+
     minIndex = i;
+
+    const circle2 = d3.select(`[element-index="${minIndex}"]`);
+    circle2.classed('selectedElement', true);
+  
+    await new Promise(resolve => setTimeout(resolve, animation_speed));
   }
 
   comp_counter++;
   updateCounters();
+  console.log(comp_counter + " i: " + i + " j: " + j);
 
   if (j < n) {
 
@@ -724,11 +818,23 @@ async function selectionSortStep(){
         i++;
         j = i + 1;
     }
+    else{
+      const circle1 = d3.select(`[element-index="${j}"]`);
+      circle1.classed('activeElement', true);
+      
+      const circle2 = d3.select(`[element-index="${minIndex}"]`);
+      circle2.classed('activeElement', true);
+  
+      await new Promise(resolve => setTimeout(resolve, animation_speed));
+  
+      circle2.classed('activeElement', false);
+      circle1.classed('activeElement', false);
+    }
   }
 
-  await new Promise(resolve => setTimeout(resolve, animation_speed));
+  //await new Promise(resolve => setTimeout(resolve, animation_speed));
 
-  nextStep.removeAttribute("disabled");
+  enableControls();
   updateGlobalData();
 }
 
@@ -741,9 +847,11 @@ function validateInput(dataString){
   }
   else {
     dataInput.classList.add('error-field');
+    displayErrors('display', 'Некорректные данные');
     return false;
   }
 }
+
 function validateArray(arr) {
   try {
     if(Array.isArray(arr)){

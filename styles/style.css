@@ -41,6 +41,10 @@ main {
 .activeElement{
     fill: #d4bbff;
 }
+.selectedElement{
+    fill: #6854b6;
+}
+
 .element-text{
     fill: #f7fcfe;
 }
@@ -106,4 +110,8 @@ svg{
 
 .visible {
     display: block;
+}
+
+#error-mes{
+    background-color: #d6ffad;
 }
