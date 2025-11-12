@@ -9,8 +9,12 @@
 
   <link rel="stylesheet" href="styles/style.css"> 
   <script src="https://d3js.org/d3.v7.min.js" ></script>
-  <script src="js2.js" defer></script>
-  <script src="interface.js" defer></script>
+  <!-- <script src="js2.js" defer></script> -->
+  <script src="js/main.js" defer></script>
+  <script src="js/event-handler.js" defer></script>
+  <script src="js/animation.js" defer></script>
+  <script src="js/sorting.js" defer></script>
+  
 
 </head>
 <body>
@@ -53,7 +57,7 @@
 
   <button id="generateArray" class="button-class">Сгенерировать случайный массив</button>
 
-  <div id="generator-wrapper" class="hidden">
+  <div id="generator-wrapper">
     <div id="generator">
       <form id="arrayGenerator">
         <input type="number" name="arrayLength" placeholder="длина массива" value="10" required>
