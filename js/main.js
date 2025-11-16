@@ -6,6 +6,7 @@ const nextStep = document.getElementById('nextStep');
 const playSort = document.getElementById('playSort');
 const selectSort = document.getElementById('selectSort');
 const selectSpeed = document.getElementById('selectSpeed');
+const showArrayForm = document.getElementById('generateArray');
 
 //console.log("check ", selectSpeed);
 
@@ -67,13 +68,17 @@ function updateCounters() {
 function endSort(){
   str = toString(comp_counter) + ' ' + toString(swap_counter);
 
-  if(document.getElementById('end-message') == null) {
-    d3.select('#visualization')
-    .append('div')
-    .attr('class', 'message')
-    .attr('id', 'end-message')
-    .text('Массив отсортирован');
-  }
+  const block = document.getElementById('success-message-wrapper');
+  block.classList.remove('hidden');
+  block.classList.add('visible');
+
+  // if(document.getElementById('end-message') == null) {
+  //   d3.select('#visualization')
+  //   .append('div')
+  //   .attr('class', 'message')
+  //   .attr('id', 'end-message')
+  //   .text('Массив отсортирован');
+  // }
 }
 
 function disableControls() {

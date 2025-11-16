@@ -1,4 +1,11 @@
 // Обработчики событий
+showArrayForm.addEventListener("click", () => {
+  const form = document.getElementById('generator-wrapper');
+
+  form.classList.toggle('hidden');
+});
+
+
 selectSpeed.addEventListener("input", function(){
     animation_speed = selectSpeed.value;
     if (validateSpeed(animation_speed)) {
@@ -31,6 +38,10 @@ selectSpeed.addEventListener("input", function(){
       j = 0;
       minIndex = i;
     }
+
+    const block = document.getElementById('success-message-wrapper');
+    block.classList.remove('visible');
+    block.classList.add('hidden');
   
     const dataString = dataInput.value;
     
@@ -47,7 +58,7 @@ selectSpeed.addEventListener("input", function(){
   });
   
   nextStep.addEventListener('click', () => {
-    console.log("click");
+    //console.log("click");
   
     if (!validateSpeed(animation_speed)) {
       console.log("ERROR");
@@ -113,10 +124,6 @@ selectSpeed.addEventListener("input", function(){
   // Инициализация
 document.getElementById("arrayGenerator").addEventListener('submit', generateArray);
 
-
-playSort.addEventListener('click', () => {
-    playFullSort(data);
-  });
 
 function generateArray(event) {
     event.preventDefault();

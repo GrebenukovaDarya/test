@@ -7,21 +7,25 @@ async function playFullSort(arr) {
   
     disableControls();
   
+    console.log("check2");
     await window[sortName]();
   
     endSort();
   }
   
   async function bubbleSort() {
+    //console.log("bubblesort full play");
     for (; i < n - 1; i++) {
       for (; j < n - i - 1; j++) {
           
           if (!isSorting || currentMode !== 'full') {
-              return;
+            //console.log("CHECK");  
+            return;
           }
   
           comp_counter++;
           updateCounters();
+          //console.log(i, j);
   
           if (currentArray[j] > currentArray[j + 1]) {
             [currentArray[j], currentArray[j + 1]] = [currentArray[j + 1], currentArray[j]];
@@ -46,11 +50,12 @@ async function playFullSort(arr) {
   
     comp_counter++;
     updateCounters();
+    //console.log(i, j);
   
     if (currentArray[j] > currentArray[j + 1]) {
       [currentArray[j], currentArray[j + 1]] = [currentArray[j + 1], currentArray[j]];
       
-      console.log("CHECK");
+      //console.log("CHECK");
   
       await visualizeSwap(j, j + 1);
   
