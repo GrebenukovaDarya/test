@@ -128,13 +128,23 @@ document.getElementById("arrayGenerator").addEventListener('submit', generateArr
 function generateArray(event) {
     event.preventDefault();
 
-    console.log("generate");
+    //console.log("generate");
   
     const form = event.target;
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
   
     const len = data.arrayLength;
+    if (len >= 50) {
+      alert("Рекомендуется использовать массив меньшей размерности");
+      return;
+    } else if( len < 2) {
+      alert("Массив должен содержать минимум 2 элемента");
+      return;
+    } else if(len > 15){
+      alert("Для наглядности рекомендуется использовать массивы длинной <= 15");
+    }
+    
     // console.log(len);
     // console.log(data.arrayType);
     const array = window[data.arrayType + 'Array'](len);
